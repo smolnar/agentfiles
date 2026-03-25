@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "if [[ \"$TOOL_INPUT_FILE_PATH\" == *.rb || \"$TOOL_INPUT_FILE_PATH\" == *.rake ]]; then STREE_CMD='stree'; if command -v bundle &>/dev/null && bundle exec stree version &>/dev/null; then STREE_CMD='bundle exec stree'; elif ! command -v stree &>/dev/null; then exit 0; fi; STREE_ARGS='write'; if [[ -f .streerc ]]; then STREE_ARGS=\"write --config .streerc\"; fi; $STREE_CMD $STREE_ARGS \"$TOOL_INPUT_FILE_PATH\"; fi",
+        "timeout": 180
+      }
+    ]
+  }
+}

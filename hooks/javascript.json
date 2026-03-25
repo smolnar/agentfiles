@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "if [[ \"$TOOL_INPUT_FILE_PATH\" == *.js || \"$TOOL_INPUT_FILE_PATH\" == *.ts || \"$TOOL_INPUT_FILE_PATH\" == *.jsx || \"$TOOL_INPUT_FILE_PATH\" == *.tsx ]]; then PRETTIER_CMD='prettier'; if command -v npx &>/dev/null && npx prettier --version &>/dev/null 2>&1; then PRETTIER_CMD='npx prettier'; elif ! command -v prettier &>/dev/null; then exit 0; fi; $PRETTIER_CMD --write \"$TOOL_INPUT_FILE_PATH\"; fi",
+        "timeout": 180
+      }
+    ]
+  }
+}
