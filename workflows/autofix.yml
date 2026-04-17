@@ -1,0 +1,41 @@
+name: GitHub Copilot Autofix
+
+on:
+  pull_request:
+    types:
+      - review_requested
+
+permissions: {}
+
+concurrency:
+  group: copilot-autofix-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  copilot-autofix:
+    name: Request Autofix
+    if: >-
+      github.event.action == 'review_requested' &&
+      (github.event.sender.login == 'copilot' ||
+       github.event.sender.login == 'copilot[bot]')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Determine iteration and post comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.COPILOT_GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: prNumber,
+              body: '@copilot, run autofix agent (.github/agents/autofix.agent.md) on all changes in this PR.'
+            });
